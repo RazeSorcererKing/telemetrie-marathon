@@ -66,6 +66,7 @@ void MainWindow::on_envoiButton_clicked()
 
 void MainWindow::gerer_donnees()
 {
+
     // Réception des données
     QByteArray reponse = tcpSocket->readAll();
 
@@ -76,7 +77,19 @@ void MainWindow::gerer_donnees()
     //Décodage
     QStringList liste = trame.split(",");
     qDebug() << liste[1];
-
+    QString lat = liste[2];
+    QString N_or_S = liste[3];
+    QString lon = liste[4];
+    QString W_or_E = liste[5];
+    QString postype = liste[6];
+    QString nb_satellite = liste[7];
+    QString precision_horizontale = liste[8];
+    QString altitude = liste[9];
+    QString hauteur_geo = liste[10];
+    QString unite_altitude = liste[11];
+    QString tps_last_maj = liste[12];
+    QString id_station_ref = liste[13];
+    QString checksum = liste[14];
     //Date
     int heures = liste[1].mid(0,2).toInt();
     int minutes = liste[1].mid(2,2).toInt();
@@ -91,10 +104,39 @@ void MainWindow::gerer_donnees()
     QString minutesQString = QString ("%1").arg(minutes);
     QString secondesQString = QString ("%1").arg(secondes);
 
+    //latitude
+    // Latitude
+    double latitude = 0.0;
+    double degres_lat = lat.mid(0,2).toDouble();
+    double minutes_lat = lat.mid(2,7).toDouble();
+    if( N_or_S == "S"){
+        latitude = (degres_lat + (minutes_lat / 60))*(-1);
+    }else if(N_or_S == "N"){
+        latitude = degres_lat + (minutes_lat / 60);
+
+    }else{
+        latitude =(degres_lat + (minutes_lat / 60));
+    }
+    QString latitude_string = QString("%1").arg(latitude);
+    ui->lineEdit_lat->setText(latitude_string);
+
+    // Longitude
+    double longitude = 0.0;
+    double degres_long = lon.mid(0,2).toDouble();
+    double minutes_long = lon.mid(2,7).toDouble();
+    if( W_or_E == "W"){
+        longitude = (degres_long + (minutes_long / 60))*(-1);
+    }else if(W_or_E == "E"){
+        longitude = degres_long + (minutes_long / 60);
+
+    }else{
+        longitude =(degres_long + (minutes_long / 60));
+    }
+    QString longitude_string = QString("%1").arg(longitude);
+    ui->lineEdit_long->setText(longitude_string);
 }
 void MainWindow::mettre_a_jour_ihm()
 {
-    qDebug() <<"tic";
     // Préparation de la requête
     QByteArray requete;
     requete = "RETR\r\n";
