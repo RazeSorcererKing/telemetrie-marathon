@@ -60,7 +60,6 @@ void MainWindow::on_envoiButton_clicked()
     // Préparation de la requête
     QByteArray requete;
     requete = "RETR\r\n";
-
     // Envoi de la requête
     tcpSocket->write(requete);
 }
@@ -73,6 +72,25 @@ void MainWindow::gerer_donnees()
     // Affichage
     ui->lineEdit_reponse->setText(QString(reponse));
     qDebug() << QString(reponse);
+    QString trame = QString(reponse);
+    //Décodage
+    QStringList liste = trame.split(",");
+    qDebug() << liste[1];
+
+    //Date
+    int heures = liste[1].mid(0,2).toInt();
+    int minutes = liste[1].mid(2,2).toInt();
+    int secondes = liste[1].mid(4,2).toInt();
+    int timestamp = (heures * 3600)+(minutes * 60) + (secondes);
+    qDebug() << "timestamp : " << timestamp;
+    qDebug() << "Heures : " << heures;
+    qDebug() << "minutes : " << minutes;
+    qDebug() << "secondes : " << secondes;
+    QString timestampQString = QString ("%1").arg(timestamp);
+    QString heuresQString = QString ("%1").arg(heures);
+    QString minutesQString = QString ("%1").arg(minutes);
+    QString secondesQString = QString ("%1").arg(secondes);
+
 }
 void MainWindow::mettre_a_jour_ihm()
 {
