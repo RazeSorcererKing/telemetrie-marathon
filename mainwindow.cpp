@@ -24,11 +24,17 @@ MainWindow::MainWindow(QWidget *parent) :
     pTimer->start(1000);
     pCarte = new QImage();
     pCarte->load(":/carte_la_rochelle.png");
-
     px = 0.0;
     py = 0.0;
     lastpx = 0.0;
     lastpy = 0.0;
+    lastlat_rad = 0.0;
+    lastlong_rad = 0.0;
+    lat_rad = 0.0;
+    long_rad = 0.0;
+    lastdistance = 0.0;
+    distAB = 0.0;
+    distance = 0.0;
 
 }
 
@@ -73,7 +79,9 @@ void MainWindow::on_envoiButton_clicked()
     // Envoi de la requête
     tcpSocket->write(requete);
 }
-
+double degToRad(double degrees) {
+    return degrees * M_PI / 180.0;
+}
 void MainWindow::gerer_donnees()
 {
 
@@ -182,12 +190,27 @@ void MainWindow::gerer_donnees()
     }
     else {
     }
+
+
     lastpx = px;
     lastpy = py;
     qDebug()<< "px:"<<px;
     qDebug()<< "py:"<<px;
     qDebug()<< "lastpx:"<<lastpx;
     qDebug()<< "lastpy:"<<lastpy;
+    long_rad = degToRad(longitude);
+    lat_rad = degToRad(latitude);
+
+    //distance
+    if(lastlat_rad != 0 && lastlong_rad != 0){
+    distAB = 6378 * acos(sin(lastlat_rad)*sin(lat_rad) + cos(lastlat_rad) * cos(lat_rad)* cos(lastlong_rad - long_rad));
+    distance = distAB + lastdistance;
+    QString distAB_string = QString("%1").arg(distance);
+    ui->lineEdit_distance->setText(distAB_string);
+    }else{
+
+    }
+
 
 }
 void MainWindow::mettre_a_jour_ihm()
@@ -198,6 +221,9 @@ void MainWindow::mettre_a_jour_ihm()
 
     // Envoi de la requête
     tcpSocket->write(requete);
+    lastlat_rad = lat_rad;
+    lastlong_rad = long_rad;
+    lastdistance = distance;
 
 }
 void MainWindow::afficher_erreur(QAbstractSocket::SocketError socketError)

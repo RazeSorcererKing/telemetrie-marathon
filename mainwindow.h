@@ -44,6 +44,15 @@ private:
     double py;
     double lastpx;
     double lastpy;
+    double distAB;
+    double R;
+    double lastlat_rad;
+    double lastlong_rad;
+    double lat_rad;
+    double long_rad;
+    double lastdistance;
+    double distance;
+
 };
 
 #endif // MAINWINDOW_H
