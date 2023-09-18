@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>carte_la_rochelle.png</file>
+    </qresource>
+</RCC>
