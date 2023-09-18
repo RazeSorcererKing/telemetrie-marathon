@@ -38,6 +38,8 @@ private:
     QTcpSocket *tcpSocket;
     QTimer *pTimer;
     QImage *pCarte;
+    double latitude;
+    double longitude;
     double px;
     double py;
     double lastpx;

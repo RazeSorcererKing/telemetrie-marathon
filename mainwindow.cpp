@@ -115,24 +115,22 @@ void MainWindow::gerer_donnees()
     QString secondesQString = QString ("%1").arg(secondes);
 
     // Latitude
-    double latitude = 0.0;
     double degres_lat = lat.mid(0,2).toDouble();
     double minutes_lat = lat.mid(2,7).toDouble();
     if( N_or_S == "S"){
-        latitude = (degres_lat + (minutes_lat / 60))*(-1);
+        latitude = (degres_lat + (minutes_lat / 60.0))*(-1.0);
     }else if(N_or_S == "N"){
-        latitude = degres_lat + (minutes_lat / 60);
+        latitude = degres_lat + (minutes_lat / 60.0);
 
     }else{
-        latitude =(degres_lat + (minutes_lat / 60));
+        latitude =(degres_lat + (minutes_lat / 60.0));
     }
     QString latitude_string = QString("%1").arg(latitude);
     ui->lineEdit_lat->setText(latitude_string);
 
     // Longitude
-    double longitude = 0.0;
-    double degres_long = lon.mid(0,2).toDouble();
-    double minutes_long = lon.mid(2,7).toDouble();
+    double degres_long = lon.mid(0,3).toDouble();
+    double minutes_long = lon.mid(3,7).toDouble();
     if( W_or_E == "W"){
         longitude = (degres_long + (minutes_long / 60))*(-1);
     }else if(W_or_E == "E"){
