@@ -6,6 +6,7 @@
 #include <QtNetwork>
 #include <QMessageBox>
 #include <QDebug>
+#include <QPainter>
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +37,11 @@ private:
     Ui::MainWindow *ui;
     QTcpSocket *tcpSocket;
     QTimer *pTimer;
+    QImage *pCarte;
+    double px;
+    double py;
+    double lastpx;
+    double lastpy;
 };
 
 #endif // MAINWINDOW_H

@@ -22,6 +22,14 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(pTimer, SIGNAL(timeout()), this, SLOT(mettre_a_jour_ihm()));
     // Lancement du timer avec un tick toutes les 1000 ms
     pTimer->start(1000);
+    pCarte = new QImage();
+    pCarte->load(":/carte_la_rochelle.png");
+
+    px = 0.0;
+    py = 0.0;
+    lastpx = 0.0;
+    lastpy = 0.0;
+
 }
 
 MainWindow::~MainWindow()
@@ -33,6 +41,8 @@ MainWindow::~MainWindow()
     pTimer->stop();
     // Destruction du timer
     delete pTimer;
+    delete pCarte;
+
 
     // Destruction de l'interface graphique
     delete ui;
@@ -150,6 +160,37 @@ void MainWindow::gerer_donnees()
     //intensité
     int intensite = (freq / fCmax) * 100;
     ui->progressBar->setValue(intensite);
+
+    //dessin sur la carte
+    // Préparation du contexte de dessin sur une image existante
+
+    const double lat_hg = 46.173311;
+    const double long_hg = -1.195703;
+    const double lat_bd = 46.135451;
+    const double long_bd = -1.136125;
+    const double largeur_carte = 694.0;
+    const double hauteur_carte = 638.0;
+    px = largeur_carte * ( (longitude - long_hg ) / (long_bd - long_hg) );
+    py = hauteur_carte * ( 1.0 - (latitude - lat_bd) / (lat_hg - lat_bd) );
+    QPainter p(pCarte);
+    // Choix de la couleur
+    if ((lastpx != 0.0) && (lastpy != 0.0)){
+
+    p.setPen(Qt::red);
+    // Dessin d'une ligne
+    p.drawLine(lastpx, lastpy, px, py);
+    p.end();
+    ui->label_carte->setPixmap(QPixmap::fromImage(*pCarte));
+    }
+    else {
+    }
+    lastpx = px;
+    lastpy = py;
+    qDebug()<< "px:"<<px;
+    qDebug()<< "py:"<<px;
+    qDebug()<< "lastpx:"<<lastpx;
+    qDebug()<< "lastpy:"<<lastpy;
+
 }
 void MainWindow::mettre_a_jour_ihm()
 {
@@ -159,6 +200,7 @@ void MainWindow::mettre_a_jour_ihm()
 
     // Envoi de la requête
     tcpSocket->write(requete);
+
 }
 void MainWindow::afficher_erreur(QAbstractSocket::SocketError socketError)
 {
