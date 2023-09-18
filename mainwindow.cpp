@@ -104,7 +104,6 @@ void MainWindow::gerer_donnees()
     QString minutesQString = QString ("%1").arg(minutes);
     QString secondesQString = QString ("%1").arg(secondes);
 
-    //latitude
     // Latitude
     double latitude = 0.0;
     double degres_lat = lat.mid(0,2).toDouble();
@@ -136,11 +135,21 @@ void MainWindow::gerer_donnees()
     ui->lineEdit_long->setText(longitude_string);
 
     //Fréquence cardiaque
-    // Fréquence cardiaque
-
     int freq = frequence_cardiaque.mid(1,3).toInt();
     QString freq_string = QString("%1").arg(freq);
     ui->lineEdit_bpm->setText(freq_string);
+
+    //age
+    int age = ui->spinBox->value();
+
+    //frequence max
+    float fCmax = 207-(0.7 * age);
+    QString fcmax_string = QString("%1").arg(fCmax);
+    ui->lineEdit_fcmax->setText(fcmax_string);
+
+    //intensité
+    int intensite = (freq / fCmax) * 100;
+    ui->progressBar->setValue(intensite);
 }
 void MainWindow::mettre_a_jour_ihm()
 {
