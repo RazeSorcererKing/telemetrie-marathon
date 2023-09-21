@@ -27,6 +27,10 @@ private slots:
 
     void on_envoiButton_clicked();
 
+    void on_pushButton_plan_clicked();
+
+    void on_pushButton_satellite_clicked();
+
     void gerer_donnees();
 
     void afficher_erreur(QAbstractSocket::SocketError);
@@ -38,6 +42,8 @@ private:
     QTcpSocket *tcpSocket;
     QTimer *pTimer;
     QImage *pCarte;
+    QImage *pSatellite;
+    QImage *pPhoto_vide;
     double latitude;
     double longitude;
     double px;

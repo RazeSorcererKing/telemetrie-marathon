@@ -303,7 +303,7 @@
    <widget class="QLabel" name="label_carte">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>0</y>
       <width>701</width>
       <height>638</height>
@@ -317,9 +317,6 @@
     </property>
     <property name="text">
      <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="carte_la_rochelle.qrc">:/carte_la_rochelle.png</pixmap>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_distance">
@@ -343,6 +340,48 @@
     </property>
     <property name="text">
      <string>distance</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_plan">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>330</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Afficher plan</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_satellite">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>360</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Afficher satellite</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_photo_vide">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>694</width>
+      <height>638</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="carte_la_rochelle.qrc">:/photo_vide.png</pixmap>
     </property>
    </widget>
   </widget>

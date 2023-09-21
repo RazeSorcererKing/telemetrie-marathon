@@ -24,6 +24,10 @@ MainWindow::MainWindow(QWidget *parent) :
     pTimer->start(1000);
     pCarte = new QImage();
     pCarte->load(":/carte_la_rochelle.png");
+    pSatellite = new QImage();
+    pSatellite->load(":/carte_la_rochelle_satellite.png");
+    pPhoto_vide = new QImage();
+    pPhoto_vide->load(":/photo_vide");
     px = 0.0;
     py = 0.0;
     lastpx = 0.0;
@@ -35,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     lastdistance = 0.0;
     distAB = 0.0;
     distance = 0.0;
-
+    ui->label_carte->setPixmap(QPixmap::fromImage(*pCarte));
 }
 
 MainWindow::~MainWindow()
@@ -48,7 +52,8 @@ MainWindow::~MainWindow()
     // Destruction du timer
     delete pTimer;
     delete pCarte;
-
+    delete pSatellite;
+    delete pPhoto_vide;
 
     // Destruction de l'interface graphique
     delete ui;
@@ -82,9 +87,20 @@ void MainWindow::on_envoiButton_clicked()
 double degToRad(double degrees) {
     return degrees * M_PI / 180.0;
 }
+void MainWindow :: on_pushButton_plan_clicked()
+{
+    ui->label_carte->setPixmap(QPixmap::fromImage(*pCarte));
+    ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
+
+}
+
+void MainWindow :: on_pushButton_satellite_clicked()
+{
+    ui->label_carte->setPixmap(QPixmap::fromImage(*pSatellite));
+    ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
+}
 void MainWindow::gerer_donnees()
 {
-
     // Réception des données
     QByteArray reponse = tcpSocket->readAll();
 
@@ -178,15 +194,18 @@ void MainWindow::gerer_donnees()
     const double hauteur_carte = 638.0;
     px = largeur_carte * ( (longitude - long_hg ) / (long_bd - long_hg) );
     py = hauteur_carte * ( 1.0 - (latitude - lat_bd) / (lat_hg - lat_bd) );
-    QPainter p(pCarte);
+
+    QPainter p(pPhoto_vide);
+
     // Choix de la couleur
     if ((lastpx != 0.0) && (lastpy != 0.0)){
 
-    p.setPen(Qt::red);
-    // Dessin d'une ligne
-    p.drawLine(lastpx, lastpy, px, py);
-    p.end();
-    ui->label_carte->setPixmap(QPixmap::fromImage(*pCarte));
+        p.setPen(Qt::red);
+        // Dessin d'une ligne
+        p.drawLine(lastpx, lastpy, px, py);
+        p.end();
+        ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
+
     }
     else {
     }
