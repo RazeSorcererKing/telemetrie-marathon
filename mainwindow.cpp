@@ -229,8 +229,13 @@ void MainWindow::gerer_donnees()
     }else{
 
     }
+    int taille = ui->spinBox_taille->value();
 
-
+    //Calories dépensé
+    double poids = ui->spinBox_poids->value();
+    double calorie = distance * poids * 1.036;
+    QString calorie_string = QString("%1").arg(calorie);
+    ui->lineEdit_calorie->setText(calorie_string);
 }
 void MainWindow::mettre_a_jour_ihm()
 {
