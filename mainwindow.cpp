@@ -124,7 +124,7 @@ void MainWindow::gerer_donnees()
     QString unite_hauteur = liste[12];
     QString tps_last_maj = liste[13];
     QString frequence_cardiaque = liste[14];
-    //Date
+    //temps écoulé
     int heures = liste[1].mid(0,2).toInt();
     int minutes = liste[1].mid(2,2).toInt();
     int secondes = liste[1].mid(4,2).toInt();
@@ -133,10 +133,13 @@ void MainWindow::gerer_donnees()
     qDebug() << "Heures : " << heures;
     qDebug() << "minutes : " << minutes;
     qDebug() << "secondes : " << secondes;
-    QString timestampQString = QString ("%1").arg(timestamp);
     QString heuresQString = QString ("%1").arg(heures);
     QString minutesQString = QString ("%1").arg(minutes);
     QString secondesQString = QString ("%1").arg(secondes);
+    int premier_relevé = 28957;
+    QString timestampQString = QString("%1").arg(timestamp-premier_relevé);
+    ui->lineEdit_temps->setText(timestampQString);
+
 
     // Latitude
     double degres_lat = lat.mid(0,2).toDouble();
@@ -236,6 +239,16 @@ void MainWindow::gerer_donnees()
     double calorie = distance * poids * 1.036;
     QString calorie_string = QString("%1").arg(calorie);
     ui->lineEdit_calorie->setText(calorie_string);
+    //altitude
+    ui->lineEdit_altitude->setText(altitude);
+    //temps écoulé
+
+    //vitesse
+    double vitesse;
+    double diff_tps = timestamp - last_timestamp;
+    vitesse = distAB/ (diff_tps/3600.0);
+    QString vitesseString = QString("%1").arg(vitesse);
+    ui->lineEdit_vitesse->setText(vitesseString);
 }
 void MainWindow::mettre_a_jour_ihm()
 {
@@ -248,6 +261,7 @@ void MainWindow::mettre_a_jour_ihm()
     lastlat_rad = lat_rad;
     lastlong_rad = long_rad;
     lastdistance = distance;
+    last_timestamp = timestamp;
 
 }
 void MainWindow::afficher_erreur(QAbstractSocket::SocketError socketError)
