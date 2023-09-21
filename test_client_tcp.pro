@@ -22,3 +22,5 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     carte_la_rochelle.qrc
+
+DISTFILES +=
