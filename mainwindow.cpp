@@ -40,6 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
     distAB = 0.0;
     distance = 0.0;
     ui->label_carte->setPixmap(QPixmap::fromImage(*pCarte));
+    timestamp = 0.0;
+    calorie = 0.0;
+    compteur = 0.0;
 }
 
 MainWindow::~MainWindow()
@@ -90,14 +93,11 @@ double degToRad(double degrees) {
 void MainWindow :: on_pushButton_plan_clicked()
 {
     ui->label_carte->setPixmap(QPixmap::fromImage(*pCarte));
-    ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
-
 }
 
 void MainWindow :: on_pushButton_satellite_clicked()
 {
     ui->label_carte->setPixmap(QPixmap::fromImage(*pSatellite));
-    ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
 }
 void MainWindow::gerer_donnees()
 {
@@ -110,7 +110,6 @@ void MainWindow::gerer_donnees()
     QString trame = QString(reponse);
     //Décodage
     QStringList liste = trame.split(",");
-    qDebug() << liste[1];
     QString lat = liste[2];
     QString N_or_S = liste[3];
     QString lon = liste[4];
@@ -124,11 +123,12 @@ void MainWindow::gerer_donnees()
     QString unite_hauteur = liste[12];
     QString tps_last_maj = liste[13];
     QString frequence_cardiaque = liste[14];
+
     //temps écoulé
     int heures = liste[1].mid(0,2).toInt();
     int minutes = liste[1].mid(2,2).toInt();
     int secondes = liste[1].mid(4,2).toInt();
-    int timestamp = (heures * 3600)+(minutes * 60) + (secondes);
+    timestamp = (heures * 3600)+(minutes * 60) + (secondes);
     qDebug() << "timestamp : " << timestamp;
     qDebug() << "Heures : " << heures;
     qDebug() << "minutes : " << minutes;
@@ -188,7 +188,6 @@ void MainWindow::gerer_donnees()
 
     //dessin sur la carte
     // Préparation du contexte de dessin sur une image existante
-
     const double lat_hg = 46.173311;
     const double long_hg = -1.195703;
     const double lat_bd = 46.135451;
@@ -197,23 +196,17 @@ void MainWindow::gerer_donnees()
     const double hauteur_carte = 638.0;
     px = largeur_carte * ( (longitude - long_hg ) / (long_bd - long_hg) );
     py = hauteur_carte * ( 1.0 - (latitude - lat_bd) / (lat_hg - lat_bd) );
-
     QPainter p(pPhoto_vide);
-
     // Choix de la couleur
     if ((lastpx != 0.0) && (lastpy != 0.0)){
-
         p.setPen(Qt::red);
         // Dessin d'une ligne
         p.drawLine(lastpx, lastpy, px, py);
         p.end();
         ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
-
     }
     else {
     }
-
-
     lastpx = px;
     lastpy = py;
     qDebug()<< "px:"<<px;
@@ -232,6 +225,7 @@ void MainWindow::gerer_donnees()
     }else{
 
     }
+    //taille
     int taille = ui->spinBox_taille->value();
 
     //Calories dépensé
@@ -249,6 +243,25 @@ void MainWindow::gerer_donnees()
     vitesse = distAB/ (diff_tps/3600.0);
     QString vitesseString = QString("%1").arg(vitesse);
     ui->lineEdit_vitesse->setText(vitesseString);
+
+    // courbe fréquence
+    QPainter painter(pPhoto_vide);
+
+    painter.setPen(QPen(Qt::transparent, 1));
+    painter.drawLine(compteur, 200, compteur,200);
+    painter.setPen(QPen(Qt::red, 1));
+    painter.drawLine(compteur, 500, compteur,600 - freq);
+    compteur += 1;
+    if (compteur >= ui->label_courbe_cardiaque->width()) {
+    pPhoto_vide->fill(Qt::transparent);
+    compteur = 0;
+    }
+    //courbe altitude
+    int altitudeDouble = altitude.toDouble();
+    painter.setPen(QPen(Qt::black, 1));
+    painter.drawLine(compteur, 600, compteur,550 - altitudeDouble);
+    ui->label_courbe_cardiaque->width();
+    painter.end();
 }
 void MainWindow::mettre_a_jour_ihm()
 {
@@ -264,6 +277,8 @@ void MainWindow::mettre_a_jour_ihm()
     last_timestamp = timestamp;
 
 }
+
+
 void MainWindow::afficher_erreur(QAbstractSocket::SocketError socketError)
 {
     switch (socketError)
