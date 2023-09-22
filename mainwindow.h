@@ -58,7 +58,11 @@ private:
     double long_rad;
     double lastdistance;
     double distance;
-
+    double altitude;
+    int last_timestamp;
+    int timestamp;
+    double calorie;
+    double compteur;
 };
 
 #endif // MAINWINDOW_H
