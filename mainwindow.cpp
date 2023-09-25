@@ -123,7 +123,9 @@ void MainWindow::gerer_donnees()
     QString unite_hauteur = liste[12];
     QString tps_last_maj = liste[13];
     QString frequence_cardiaque = liste[14];
-
+    int satellite = nb_satellite.toInt();
+    if (satellite > 3){
+        qDebug()<<"satellite"<<satellite;
     //temps écoulé
     int heures = liste[1].mid(0,2).toInt();
     int minutes = liste[1].mid(2,2).toInt();
@@ -209,10 +211,6 @@ void MainWindow::gerer_donnees()
     }
     lastpx = px;
     lastpy = py;
-    qDebug()<< "px:"<<px;
-    qDebug()<< "py:"<<px;
-    qDebug()<< "lastpx:"<<lastpx;
-    qDebug()<< "lastpy:"<<lastpy;
     long_rad = degToRad(longitude);
     lat_rad = degToRad(latitude);
 
@@ -235,7 +233,6 @@ void MainWindow::gerer_donnees()
     ui->lineEdit_calorie->setText(calorie_string);
     //altitude
     ui->lineEdit_altitude->setText(altitude);
-    //temps écoulé
 
     //vitesse
     double vitesse;
@@ -262,6 +259,17 @@ void MainWindow::gerer_donnees()
     painter.drawLine(compteur, 600, compteur,550 - altitudeDouble);
     ui->label_courbe_cardiaque->width();
     painter.end();
+
+    ui->lineEdit_satellite->setText(nb_satellite);
+    }
+    else{
+    ui->lineEdit_lat->setText("error");
+    ui->lineEdit_long->setText("error");
+    ui->lineEdit_altitude->setText("error");
+    ui->lineEdit_vitesse->setText("error");
+    ui->lineEdit_distance->setText("error");
+    ui->lineEdit_satellite->setText("Pas assez de satellite");
+    }
 }
 void MainWindow::mettre_a_jour_ihm()
 {
