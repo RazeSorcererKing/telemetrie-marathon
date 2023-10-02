@@ -44,6 +44,7 @@ private:
     QImage *pCarte;
     QImage *pSatellite;
     QImage *pPhoto_vide;
+    QImage *pPhoto_coureur;
     double latitude;
     double longitude;
     double px;

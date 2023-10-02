@@ -3,5 +3,6 @@
         <file>carte_la_rochelle.png</file>
         <file>carte_la_rochelle_satellite.png</file>
         <file>photo_vide.png</file>
+        <file>photo_coureur.png</file>
     </qresource>
 </RCC>
