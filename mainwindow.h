@@ -7,6 +7,11 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QPainter>
+#include <QDebug>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QSqlRecord>
+
 
 namespace Ui {
 class MainWindow;
@@ -45,6 +50,8 @@ private:
     QImage *pSatellite;
     QImage *pPhoto_vide;
     QImage *pPhoto_coureur;
+
+
     double latitude;
     double longitude;
     double px;
@@ -64,6 +71,7 @@ private:
     int timestamp;
     double calorie;
     double compteur;
+    QSqlDatabase bdd;
 };
 
 #endif // MAINWINDOW_H

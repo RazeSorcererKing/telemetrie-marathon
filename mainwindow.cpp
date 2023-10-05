@@ -24,10 +24,16 @@ MainWindow::MainWindow(QWidget *parent) :
     pTimer->start(1000);
     pCarte = new QImage();
     pCarte->load(":/carte_la_rochelle.png");
+
     pSatellite = new QImage();
     pSatellite->load(":/carte_la_rochelle_satellite.png");
+
     pPhoto_vide = new QImage();
-    pPhoto_vide->load(":/photo_vide");
+    pPhoto_vide->load(":/photo_vide.png");
+
+    pPhoto_coureur = new QImage();
+    pPhoto_coureur->load(":/photo_coureur.png");
+
     px = 0.0;
     py = 0.0;
     lastpx = 0.0;
@@ -50,6 +56,9 @@ MainWindow::~MainWindow()
     // Destruction de la socket
     tcpSocket->abort();
     delete tcpSocket;
+    // arrêt de la connection à la base de donnée
+    bdd.close();
+
     // Arrêt du timer
     pTimer->stop();
     // Destruction du timer
@@ -60,7 +69,6 @@ MainWindow::~MainWindow()
 
     // Destruction de l'interface graphique
     delete ui;
-
 }
 
 void MainWindow::on_connexionButton_clicked()
@@ -198,14 +206,14 @@ void MainWindow::gerer_donnees()
     const double hauteur_carte = 638.0;
     px = largeur_carte * ( (longitude - long_hg ) / (long_bd - long_hg) );
     py = hauteur_carte * ( 1.0 - (latitude - lat_bd) / (lat_hg - lat_bd) );
-    QPainter p(pPhoto_vide);
+    QPainter p(pPhoto_coureur);
     // Choix de la couleur
     if ((lastpx != 0.0) && (lastpy != 0.0)){
         p.setPen(Qt::red);
         // Dessin d'une ligne
         p.drawLine(lastpx, lastpy, px, py);
         p.end();
-        ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
+        ui->label_coureur->setPixmap(QPixmap::fromImage(*pPhoto_coureur));
     }
     else {
     }
@@ -243,7 +251,7 @@ void MainWindow::gerer_donnees()
 
     // courbe fréquence
     QPainter painter(pPhoto_vide);
-
+    ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
     painter.setPen(QPen(Qt::transparent, 1));
     painter.drawLine(compteur, 200, compteur,200);
     painter.setPen(QPen(Qt::red, 1));
@@ -254,10 +262,11 @@ void MainWindow::gerer_donnees()
         compteur = 0;
     }
     //courbe altitude
+
     int altitudeDouble = altitude.toDouble();
     painter.setPen(QPen(Qt::black, 1));
     painter.drawLine(compteur, 600, compteur,550 - altitudeDouble);
-    ui->label_courbe_cardiaque->width();
+    ui->label_courbe_altitude->width();
     painter.end();
 
     ui->lineEdit_satellite->setText(nb_satellite);
@@ -270,6 +279,18 @@ void MainWindow::gerer_donnees()
     ui->lineEdit_distance->setText("error");
     ui->lineEdit_satellite->setText("Pas assez de satellite");
     }
+
+    bdd = QSqlDatabase::addDatabase("QSQLITE");
+    bdd.setDatabaseName(":/marathon.sqlite");
+    if (!bdd.open())
+    {
+    qDebug() << "Error: connection with database fail";
+    }
+    else
+    {
+    qDebug() << "Database: connection ok";
+    }
+
 }
 void MainWindow::mettre_a_jour_ihm()
 {

@@ -542,6 +542,50 @@
      </rect>
     </property>
    </widget>
+   <widget class="QLabel" name="label_coureur">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>694</width>
+      <height>638</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>label_1</zorder>
+   <zorder>label_2</zorder>
+   <zorder>lineEdit_ip</zorder>
+   <zorder>lineEdit_port</zorder>
+   <zorder>label_4</zorder>
+   <zorder>lineEdit_reponse</zorder>
+   <zorder>connexionButton</zorder>
+   <zorder>deconnexionButton</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>label_carte</zorder>
+   <zorder>lineEdit_distance</zorder>
+   <zorder>label_9</zorder>
+   <zorder>pushButton_plan</zorder>
+   <zorder>pushButton_satellite</zorder>
+   <zorder>lineEdit_calorie</zorder>
+   <zorder>label_12</zorder>
+   <zorder>label_13</zorder>
+   <zorder>label_16</zorder>
+   <zorder>label_17</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>lineEdit_satellite</zorder>
+   <zorder>label_courbe_altitude</zorder>
+   <zorder>label_courbe_cardiaque</zorder>
+   <zorder>label_coureur</zorder>
+   <zorder>label_photo_vide</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
