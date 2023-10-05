@@ -132,156 +132,153 @@ void MainWindow::gerer_donnees()
     QString tps_last_maj = liste[13];
     QString frequence_cardiaque = liste[14];
     int satellite = nb_satellite.toInt();
-    if (satellite > 3){
-        qDebug()<<"satellite"<<satellite;
-    //temps écoulé
-    int heures = liste[1].mid(0,2).toInt();
-    int minutes = liste[1].mid(2,2).toInt();
-    int secondes = liste[1].mid(4,2).toInt();
-    timestamp = (heures * 3600)+(minutes * 60) + (secondes);
-    qDebug() << "timestamp : " << timestamp;
-    qDebug() << "Heures : " << heures;
-    qDebug() << "minutes : " << minutes;
-    qDebug() << "secondes : " << secondes;
-    QString heuresQString = QString ("%1").arg(heures);
-    QString minutesQString = QString ("%1").arg(minutes);
-    QString secondesQString = QString ("%1").arg(secondes);
-    int premier_relevé = 28957;
-        QString timestampQString = QString("%1").arg(timestamp-premier_relevé);
-          ui->lineEdit_temps->setText(timestampQString);
+    if (satellite >= 3){
+        //temps écoulé
+        int heures = liste[1].mid(0,2).toInt();
+        int minutes = liste[1].mid(2,2).toInt();
+        int secondes = liste[1].mid(4,2).toInt();
+        timestamp = (heures * 3600)+(minutes * 60) + (secondes);
+        QString heuresQString = QString ("%1").arg(heures);
+        QString minutesQString = QString ("%1").arg(minutes);
+        QString secondesQString = QString ("%1").arg(secondes);
+        int premier_relevé = 28957;
+            QString timestampQString = QString("%1").arg(timestamp-premier_relevé);
+              ui->lineEdit_temps->setText(timestampQString);
 
 
-    // Latitude
-    double degres_lat = lat.mid(0,2).toDouble();
-    double minutes_lat = lat.mid(2,7).toDouble();
-    if( N_or_S == "S"){
-        latitude = (degres_lat + (minutes_lat / 60.0))*(-1.0);
-    }else if(N_or_S == "N"){
-        latitude = degres_lat + (minutes_lat / 60.0);
+        // Latitude
+        double degres_lat = lat.mid(0,2).toDouble();
+        double minutes_lat = lat.mid(2,7).toDouble();
+        if( N_or_S == "S"){
+            latitude = (degres_lat + (minutes_lat / 60.0))*(-1.0);
+        }else if(N_or_S == "N"){
+            latitude = degres_lat + (minutes_lat / 60.0);
 
-    }else{
-        latitude =(degres_lat + (minutes_lat / 60.0));
-    }
-    QString latitude_string = QString("%1").arg(latitude);
-    ui->lineEdit_lat->setText(latitude_string);
+        }else{
+            latitude =(degres_lat + (minutes_lat / 60.0));
+        }
+        QString latitude_string = QString("%1").arg(latitude);
+        ui->lineEdit_lat->setText(latitude_string);
 
-    // Longitude
-    double degres_long = lon.mid(0,3).toDouble();
-    double minutes_long = lon.mid(3,7).toDouble();
-    if( W_or_E == "W"){
-        longitude = (degres_long + (minutes_long / 60))*(-1);
-    }else if(W_or_E == "E"){
-        longitude = degres_long + (minutes_long / 60);
+        // Longitude
+        double degres_long = lon.mid(0,3).toDouble();
+        double minutes_long = lon.mid(3,7).toDouble();
+        if( W_or_E == "W"){
+            longitude = (degres_long + (minutes_long / 60))*(-1);
+        }else if(W_or_E == "E"){
+            longitude = degres_long + (minutes_long / 60);
 
-    }else{
-        longitude =(degres_long + (minutes_long / 60));
-    }
-    QString longitude_string = QString("%1").arg(longitude);
-    ui->lineEdit_long->setText(longitude_string);
+        }else{
+            longitude =(degres_long + (minutes_long / 60));
+        }
+        QString longitude_string = QString("%1").arg(longitude);
+        ui->lineEdit_long->setText(longitude_string);
 
-    //Fréquence cardiaque
-    int freq = frequence_cardiaque.mid(1,3).toInt();
-    QString freq_string = QString("%1").arg(freq);
-    ui->lineEdit_bpm->setText(freq_string);
+        //Fréquence cardiaque
+        int freq = frequence_cardiaque.mid(1,3).toInt();
+        QString freq_string = QString("%1").arg(freq);
+        ui->lineEdit_bpm->setText(freq_string);
 
-    //age
-    int age = ui->spinBox->value();
+        //age
+        int age = ui->spinBox->value();
 
-    //frequence max
-    float fCmax = 207-(0.7 * age);
-    QString fcmax_string = QString("%1").arg(fCmax);
-    ui->lineEdit_fcmax->setText(fcmax_string);
+        //frequence max
+        float fCmax = 207-(0.7 * age);
+        QString fcmax_string = QString("%1").arg(fCmax);
+        ui->lineEdit_fcmax->setText(fcmax_string);
 
-    //intensité
-    int intensite = (freq / fCmax) * 100;
-    ui->progressBar->setValue(intensite);
+        //intensité
+        int intensite = (freq / fCmax) * 100;
+        ui->progressBar->setValue(intensite);
 
-    //dessin sur la carte
-    // Préparation du contexte de dessin sur une image existante
-    const double lat_hg = 46.173311;
-    const double long_hg = -1.195703;
-    const double lat_bd = 46.135451;
-    const double long_bd = -1.136125;
-    const double largeur_carte = 694.0;
-    const double hauteur_carte = 638.0;
-    px = largeur_carte * ( (longitude - long_hg ) / (long_bd - long_hg) );
-    py = hauteur_carte * ( 1.0 - (latitude - lat_bd) / (lat_hg - lat_bd) );
-    QPainter p(pPhoto_coureur);
-    // Choix de la couleur
-    if ((lastpx != 0.0) && (lastpy != 0.0)){
-        p.setPen(Qt::red);
-        // Dessin d'une ligne
-        p.drawLine(lastpx, lastpy, px, py);
-        p.end();
-        ui->label_coureur->setPixmap(QPixmap::fromImage(*pPhoto_coureur));
-    }
-    else {
-    }
-    lastpx = px;
-    lastpy = py;
-    long_rad = degToRad(longitude);
-    lat_rad = degToRad(latitude);
+        //dessin sur la carte
+        // Préparation du contexte de dessin sur une image existante
+        const double lat_hg = 46.173311;
+        const double long_hg = -1.195703;
+        const double lat_bd = 46.135451;
+        const double long_bd = -1.136125;
+        const double largeur_carte = 694.0;
+        const double hauteur_carte = 638.0;
+        px = largeur_carte * ( (longitude - long_hg ) / (long_bd - long_hg) );
+        py = hauteur_carte * ( 1.0 - (latitude - lat_bd) / (lat_hg - lat_bd) );
+        QPainter p(pPhoto_coureur);
+        // Choix de la couleur
+        if ((lastpx != 0.0) && (lastpy != 0.0)){
+            p.setPen(Qt::red);
+            // Dessin d'une ligne
+            p.drawLine(lastpx, lastpy, px, py);
+            p.end();
+            ui->label_coureur->setPixmap(QPixmap::fromImage(*pPhoto_coureur));
+        }
+        else {
+        }
+        lastpx = px;
+        lastpy = py;
+        long_rad = degToRad(longitude);
+        lat_rad = degToRad(latitude);
 
-    //distance
-    if(lastlat_rad != 0 && lastlong_rad != 0){
-        distAB = 6378 * acos(sin(lastlat_rad)*sin(lat_rad) + cos(lastlat_rad) * cos(lat_rad)* cos(lastlong_rad - long_rad));
-        distance = distAB + lastdistance;
-        QString distAB_string = QString("%1").arg(distance);
-        ui->lineEdit_distance->setText(distAB_string);
-    }else{
+        //distance
+        if(lastlat_rad != 0 && lastlong_rad != 0){
+            distAB = 6378 * acos(sin(lastlat_rad)*sin(lat_rad) + cos(lastlat_rad) * cos(lat_rad)* cos(lastlong_rad - long_rad));
+            distance = distAB + lastdistance;
+            QString distAB_string = QString("%1").arg(distance);
+            ui->lineEdit_distance->setText(distAB_string);
+        }else{
 
-    }
-    //taille
-    int taille = ui->spinBox_taille->value();
+        }
+        //taille
+        int taille = ui->spinBox_taille->value();
 
-    //Calories dépensé
-    double poids = ui->spinBox_poids->value();
-    double calorie = distance * poids * 1.036;
-    QString calorie_string = QString("%1").arg(calorie);
-    ui->lineEdit_calorie->setText(calorie_string);
-    //altitude
-    ui->lineEdit_altitude->setText(altitude);
+        //Calories dépensé
+        double poids = ui->spinBox_poids->value();
+        double calorie = distance * poids * 1.036;
+        QString calorie_string = QString("%1").arg(calorie);
+        ui->lineEdit_calorie->setText(calorie_string);
 
-    //vitesse
-    double vitesse;
-    double diff_tps = timestamp - last_timestamp;
-    vitesse = distAB/ (diff_tps/3600.0);
-    QString vitesseString = QString("%1").arg(vitesse);
-    ui->lineEdit_vitesse->setText(vitesseString);
+        //altitude
+        ui->lineEdit_altitude->setText(altitude);
 
-    // courbe fréquence
-    QPainter painter(pPhoto_vide);
-    ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
-    painter.setPen(QPen(Qt::transparent, 1));
-    painter.drawLine(compteur, 200, compteur,200);
-    painter.setPen(QPen(Qt::red, 1));
-    painter.drawLine(compteur, 500, compteur,600 - freq);
-    compteur += 1;
-    if (compteur >= ui->label_courbe_cardiaque->width()) {
-        pPhoto_vide->fill(Qt::transparent);
-        compteur = 0;
-    }
-    //courbe altitude
+        //vitesse
+        double vitesse;
+        double diff_tps = timestamp - last_timestamp;
+        vitesse = distAB/ (diff_tps/3600.0);
+        QString vitesseString = QString("%1").arg(vitesse);
+        ui->lineEdit_vitesse->setText(vitesseString);
 
-    int altitudeDouble = altitude.toDouble();
-    painter.setPen(QPen(Qt::black, 1));
-    painter.drawLine(compteur, 600, compteur,550 - altitudeDouble);
-    ui->label_courbe_altitude->width();
-    painter.end();
+        // courbe fréquence
+        QPainter painter(pPhoto_vide);
+        ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
+        painter.setPen(QPen(Qt::transparent, 1));
+        painter.drawLine(compteur, 200, compteur,200);
+        painter.setPen(QPen(Qt::red, 1));
+        painter.drawLine(compteur, 500, compteur,600 - freq);
+        compteur += 1;
+        if (compteur >= ui->label_courbe_cardiaque->width()) {
+            pPhoto_vide->fill(Qt::transparent);
+            compteur = 0;
+        }
+        //courbe altitude
 
-    ui->lineEdit_satellite->setText(nb_satellite);
+        int altitudeDouble = altitude.toDouble();
+        painter.setPen(QPen(Qt::black, 1));
+        painter.drawLine(compteur, 600, compteur,550 - altitudeDouble);
+        ui->label_courbe_altitude->width();
+        painter.end();
+
+        ui->lineEdit_satellite->setText(nb_satellite);
+        qDebug()<<vitesse<<"vitesse";
     }
     else{
-    ui->lineEdit_lat->setText("error");
-    ui->lineEdit_long->setText("error");
-    ui->lineEdit_altitude->setText("error");
-    ui->lineEdit_vitesse->setText("error");
-    ui->lineEdit_distance->setText("error");
-    ui->lineEdit_satellite->setText("Pas assez de satellite");
+        ui->lineEdit_lat->setText("error");
+        ui->lineEdit_long->setText("error");
+        ui->lineEdit_altitude->setText("error");
+        ui->lineEdit_vitesse->setText("error");
+        ui->lineEdit_distance->setText("error");
+        ui->lineEdit_satellite->setText("Pas assez de satellite");
     }
-
+    //Connexion a la base de donnée
     bdd = QSqlDatabase::addDatabase("QSQLITE");
-    bdd.setDatabaseName(":/marathon.sqlite");
+    //bdd.setDatabaseName("c:\users\germa\Documents\GitHub\telemetrie-marathonmarathon.sqlite");
     if (!bdd.open())
     {
     qDebug() << "Error: connection with database fail";

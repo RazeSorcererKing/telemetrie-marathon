@@ -6,12 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1350</width>
-    <height>787</height>
+    <width>1105</width>
+    <height>783</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Client TCP v0.1</string>
+   <string>Trainer Supervisor v1.0</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="carte_la_rochelle.qrc">
+    <normaloff>:/coureur.png</normaloff>:/coureur.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLabel" name="label_1">
@@ -150,55 +154,6 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_distance">
-    <property name="geometry">
-     <rect>
-      <x>842</x>
-      <y>440</y>
-      <width>113</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_9">
-    <property name="geometry">
-     <rect>
-      <x>792</x>
-      <y>440</y>
-      <width>49</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>distance</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_plan">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>590</y>
-      <width>131</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Afficher plan</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_satellite">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>620</y>
-      <width>131</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Afficher satellite</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_photo_vide">
     <property name="geometry">
      <rect>
@@ -213,29 +168,6 @@
     </property>
     <property name="pixmap">
      <pixmap resource="carte_la_rochelle.qrc">:/photo_vide.png</pixmap>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit_calorie">
-    <property name="geometry">
-     <rect>
-      <x>842</x>
-      <y>410</y>
-      <width>113</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_12">
-    <property name="geometry">
-     <rect>
-      <x>710</x>
-      <y>410</y>
-      <width>131</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>calorie dépensé (en kcal)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_13">
@@ -318,8 +250,8 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>480</y>
+      <x>700</x>
+      <y>460</y>
       <width>144</width>
       <height>91</height>
      </rect>
@@ -532,16 +464,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_satellite">
-    <property name="geometry">
-     <rect>
-      <x>950</x>
-      <y>520</y>
-      <width>231</width>
-      <height>161</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_coureur">
     <property name="geometry">
      <rect>
@@ -557,6 +479,90 @@
     <property name="text">
      <string/>
     </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>570</y>
+      <width>339</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>Nombre de satellite :</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_satellite"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QPushButton" name="pushButton_satellite">
+         <property name="text">
+          <string>Afficher satellite</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_plan">
+         <property name="text">
+          <string>Afficher plan</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>380</y>
+      <width>249</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_11">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Distance (km)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_distance"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>calorie dépensé (en kcal)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_calorie"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </widget>
    <zorder>label_1</zorder>
    <zorder>label_2</zorder>
@@ -586,13 +592,18 @@
    <zorder>label_courbe_cardiaque</zorder>
    <zorder>label_coureur</zorder>
    <zorder>label_photo_vide</zorder>
+   <zorder>label_18</zorder>
+   <zorder>lineEdit_calorie</zorder>
+   <zorder>label_12</zorder>
+   <zorder>lineEdit_distance</zorder>
+   <zorder>label_9</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1350</width>
+     <width>1105</width>
      <height>21</height>
     </rect>
    </property>
