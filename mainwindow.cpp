@@ -210,7 +210,6 @@ void MainWindow::gerer_donnees()
             latitude = (degres_lat + (minutes_lat / 60.0))*(-1.0);
         }else if(N_or_S == "N"){
             latitude = degres_lat + (minutes_lat / 60.0);
-
         }else{
             latitude =(degres_lat + (minutes_lat / 60.0));
         }
@@ -357,7 +356,6 @@ void MainWindow::mettre_a_jour_ihm()
     lastlong_rad = long_rad;
     lastdistance = distance;
     last_timestamp = timestamp;
-
 }
 
 
@@ -376,8 +374,6 @@ void MainWindow::afficher_erreur(QAbstractSocket::SocketError socketError)
                                  tr("Connexion refusée"));
             break;
     default:
-        QMessageBox::information(this, tr("Client TCP"),
-                                 tr("Erreur : %1.")
-                                     .arg(tcpSocket->errorString()));
+        QMessageBox::information(this, tr("Client TCP"),tr("Erreur : %1.").arg(tcpSocket->errorString()));
     }
 }
