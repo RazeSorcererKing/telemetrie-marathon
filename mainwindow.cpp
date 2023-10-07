@@ -4,7 +4,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-{
+    {
     // Initialisation de l'interface graphique
     ui->setupUi(this);
 
@@ -107,6 +107,33 @@ void MainWindow :: on_pushButton_satellite_clicked()
 {
     ui->label_carte->setPixmap(QPixmap::fromImage(*pSatellite));
 }
+
+QString calculateChecksum(const QString &nmeaFrame) {
+    // Recherche de l'index du caractère '$'
+    int startIndex = nmeaFrame.indexOf('$');
+    if (startIndex == -1) {
+        return QString(); // Pas de caractère '$' trouvé
+    }
+
+    // Recherche de l'index du caractère ''
+    int endIndex = nmeaFrame.indexOf('*', startIndex);
+    if (endIndex == -1) {
+        return QString(); // Pas de caractère '' trouvé
+    }
+
+    // Extraction de la sous-chaîne entre '$' et '' (exclusivement)
+    QString subString = nmeaFrame.mid(startIndex + 1, endIndex - startIndex - 1);
+
+    // Calcul du checksum en effectuant un XOR sur les caractères hexadécimaux
+    char checksum = 0;
+    for (int i = 0; i < subString.length(); i++) {
+        checksum ^= subString.at(i).toLatin1();
+    }
+
+    // Formatage du checksum en hexadécimal avec deux chiffres
+    return QString("%1").arg(checksum, 2, 16, QLatin1Char('0')).toLower();
+}
+
 void MainWindow::gerer_donnees()
 {
     // Réception des données
@@ -114,7 +141,6 @@ void MainWindow::gerer_donnees()
 
     // Affichage
     ui->lineEdit_reponse->setText(QString(reponse));
-    qDebug() << QString(reponse);
     QString trame = QString(reponse);
     //Décodage
     QStringList liste = trame.split(",");
@@ -132,7 +158,22 @@ void MainWindow::gerer_donnees()
     QString tps_last_maj = liste[13];
     QString frequence_cardiaque = liste[14];
     int satellite = nb_satellite.toInt();
-    if (satellite >= 3){
+
+    QString checksum_recu = frequence_cardiaque.mid(5, 2);
+    QString invalid_checksum = "Checksum non-valide";
+    QString invalid_nb_satellite = "satellites insufisants";
+    if (checksum_recu != calculateChecksum(trame)) {
+
+        ui->lineEdit_calorie->setText(invalid_checksum);
+        ui->lineEdit_altitude->setText(invalid_checksum);
+        ui->lineEdit_distance->setText(invalid_checksum);
+        ui->lineEdit_fcmax->setText(invalid_checksum);
+        ui->lineEdit_bpm->setText(invalid_checksum);
+        ui->lineEdit_temps->setText(invalid_checksum);
+        ui->lineEdit_lat->setText(invalid_checksum);
+        ui->lineEdit_long->setText(invalid_checksum);
+        ui->lineEdit_vitesse->setText(invalid_checksum);
+    }else if (satellite >= 3){
         //temps écoulé
         int heures = liste[1].mid(0,2).toInt();
         int minutes = liste[1].mid(2,2).toInt();
@@ -141,10 +182,16 @@ void MainWindow::gerer_donnees()
         QString heuresQString = QString ("%1").arg(heures);
         QString minutesQString = QString ("%1").arg(minutes);
         QString secondesQString = QString ("%1").arg(secondes);
-        int premier_relevé = 28957;
-            QString timestampQString = QString("%1").arg(timestamp-premier_relevé);
-              ui->lineEdit_temps->setText(timestampQString);
+        int premier_releve = 28957;
+            int tempsEcouleDepuisDebut = timestamp - premier_releve;
 
+        int heuresEcoule = tempsEcouleDepuisDebut / 3600;
+        int minutesEcoule = (tempsEcouleDepuisDebut % 3600) / 60;
+        int secondesEcoule = tempsEcouleDepuisDebut % 60;
+
+        QString tempsFormatte = QString("%1:%2:%3").arg(heuresEcoule, 2, 10, QChar('0')).arg(minutesEcoule, 2, 10, QChar('0')).arg(secondesEcoule, 2, 10, QChar('0'));
+
+        ui->lineEdit_temps->setText(tempsFormatte);
 
         // Latitude
         double degres_lat = lat.mid(0,2).toDouble();
@@ -266,15 +313,9 @@ void MainWindow::gerer_donnees()
         painter.end();
 
         ui->lineEdit_satellite->setText(nb_satellite);
-        qDebug()<<vitesse<<"vitesse";
     }
     else{
-        ui->lineEdit_lat->setText("error");
-        ui->lineEdit_long->setText("error");
-        ui->lineEdit_altitude->setText("error");
-        ui->lineEdit_vitesse->setText("error");
-        ui->lineEdit_distance->setText("error");
-        ui->lineEdit_satellite->setText("Pas assez de satellite");
+
     }
     //Connexion a la base de donnée
     bdd = QSqlDatabase::addDatabase("QSQLITE");
