@@ -22,18 +22,23 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(pTimer, SIGNAL(timeout()), this, SLOT(mettre_a_jour_ihm()));
     // Lancement du timer avec un tick toutes les 1000 ms
     pTimer->start(1000);
+    // Ajout du plan
     pCarte = new QImage();
     pCarte->load(":/carte_la_rochelle.png");
 
+    // Ajout de l'image satellite
     pSatellite = new QImage();
     pSatellite->load(":/carte_la_rochelle_satellite.png");
 
+    // Ajout de l'image invisible pour les courbes
     pPhoto_vide = new QImage();
     pPhoto_vide->load(":/photo_vide.png");
 
+    // Ajout de l'image invisible pour le tracer du coureur
     pPhoto_coureur = new QImage();
     pPhoto_coureur->load(":/photo_coureur.png");
 
+    // Déclaration des variables
     px = 0.0;
     py = 0.0;
     lastpx = 0.0;
@@ -95,9 +100,12 @@ void MainWindow::on_envoiButton_clicked()
     // Envoi de la requête
     tcpSocket->write(requete);
 }
+
+// Fonction pour la conversion de degré à radian
 double degToRad(double degrees) {
     return degrees * M_PI / 180.0;
 }
+
 void MainWindow :: on_pushButton_plan_clicked()
 {
     ui->label_carte->setPixmap(QPixmap::fromImage(*pCarte));
@@ -107,7 +115,7 @@ void MainWindow :: on_pushButton_satellite_clicked()
 {
     ui->label_carte->setPixmap(QPixmap::fromImage(*pSatellite));
 }
-
+// Fonction qui calcul le chacksum
 QString calculateChecksum(const QString &nmeaFrame) {
     // Recherche de l'index du caractère '$'
     int startIndex = nmeaFrame.indexOf('$');
@@ -139,10 +147,10 @@ void MainWindow::gerer_donnees()
     // Réception des données
     QByteArray reponse = tcpSocket->readAll();
 
-    // Affichage
+    // Affichage de la trame
     ui->lineEdit_reponse->setText(QString(reponse));
     QString trame = QString(reponse);
-    //Décodage
+    //Décodage de la trame
     QStringList liste = trame.split(",");
     QString lat = liste[2];
     QString N_or_S = liste[3];
@@ -162,6 +170,7 @@ void MainWindow::gerer_donnees()
     QString checksum_recu = frequence_cardiaque.mid(5, 2);
     QString invalid_checksum = "Checksum non-valide";
     QString invalid_nb_satellite = "satellites insufisants";
+    // Condition si le checksum est valide
     if (checksum_recu != calculateChecksum(trame)) {
 
         ui->lineEdit_calorie->setText(invalid_checksum);
@@ -173,7 +182,9 @@ void MainWindow::gerer_donnees()
         ui->lineEdit_lat->setText(invalid_checksum);
         ui->lineEdit_long->setText(invalid_checksum);
         ui->lineEdit_vitesse->setText(invalid_checksum);
-    }else if (satellite >= 3){
+    }
+    // Condition si le nombre de satellite est supérieur à 3
+    else if (satellite >= 3){
         //temps écoulé
         int heures = liste[1].mid(0,2).toInt();
         int minutes = liste[1].mid(2,2).toInt();
@@ -183,17 +194,16 @@ void MainWindow::gerer_donnees()
         QString minutesQString = QString ("%1").arg(minutes);
         QString secondesQString = QString ("%1").arg(secondes);
         int premier_releve = 28957;
-            int tempsEcouleDepuisDebut = timestamp - premier_releve;
-
+        int tempsEcouleDepuisDebut = timestamp - premier_releve;
         int heuresEcoule = tempsEcouleDepuisDebut / 3600;
         int minutesEcoule = (tempsEcouleDepuisDebut % 3600) / 60;
         int secondesEcoule = tempsEcouleDepuisDebut % 60;
-
+        // Affichage du temps sous le format HH:MM:SS
         QString tempsFormatte = QString("%1:%2:%3").arg(heuresEcoule, 2, 10, QChar('0')).arg(minutesEcoule, 2, 10, QChar('0')).arg(secondesEcoule, 2, 10, QChar('0'));
 
         ui->lineEdit_temps->setText(tempsFormatte);
 
-        // Latitude
+        // Calcul de la latitude
         double degres_lat = lat.mid(0,2).toDouble();
         double minutes_lat = lat.mid(2,7).toDouble();
         if( N_or_S == "S"){
@@ -207,7 +217,7 @@ void MainWindow::gerer_donnees()
         QString latitude_string = QString("%1").arg(latitude);
         ui->lineEdit_lat->setText(latitude_string);
 
-        // Longitude
+        // Calcul de la longitude
         double degres_long = lon.mid(0,3).toDouble();
         double minutes_long = lon.mid(3,7).toDouble();
         if( W_or_E == "W"){
@@ -221,24 +231,23 @@ void MainWindow::gerer_donnees()
         QString longitude_string = QString("%1").arg(longitude);
         ui->lineEdit_long->setText(longitude_string);
 
-        //Fréquence cardiaque
+        // Fréquence cardiaque
         int freq = frequence_cardiaque.mid(1,3).toInt();
         QString freq_string = QString("%1").arg(freq);
         ui->lineEdit_bpm->setText(freq_string);
 
-        //age
+        // SpinBox de l'âge
         int age = ui->spinBox->value();
 
-        //frequence max
+        // Calcul de la frequence max
         float fCmax = 207-(0.7 * age);
         QString fcmax_string = QString("%1").arg(fCmax);
         ui->lineEdit_fcmax->setText(fcmax_string);
 
-        //intensité
+        // Calcul de l'intensité
         int intensite = (freq / fCmax) * 100;
         ui->progressBar->setValue(intensite);
 
-        //dessin sur la carte
         // Préparation du contexte de dessin sur une image existante
         const double lat_hg = 46.173311;
         const double long_hg = -1.195703;
@@ -248,6 +257,8 @@ void MainWindow::gerer_donnees()
         const double hauteur_carte = 638.0;
         px = largeur_carte * ( (longitude - long_hg ) / (long_bd - long_hg) );
         py = hauteur_carte * ( 1.0 - (latitude - lat_bd) / (lat_hg - lat_bd) );
+
+        // Dessin du tracer du coureur sur la carte
         QPainter p(pPhoto_coureur);
         // Choix de la couleur
         if ((lastpx != 0.0) && (lastpy != 0.0)){
@@ -264,50 +275,54 @@ void MainWindow::gerer_donnees()
         long_rad = degToRad(longitude);
         lat_rad = degToRad(latitude);
 
-        //distance
+        // Calcul de la distance
         if(lastlat_rad != 0 && lastlong_rad != 0){
             distAB = 6378 * acos(sin(lastlat_rad)*sin(lat_rad) + cos(lastlat_rad) * cos(lat_rad)* cos(lastlong_rad - long_rad));
             distance = distAB + lastdistance;
             QString distAB_string = QString("%1").arg(distance);
             ui->lineEdit_distance->setText(distAB_string);
         }else{
-
         }
-        //taille
+
+        // Spinbox de la taille
         int taille = ui->spinBox_taille->value();
 
-        //Calories dépensé
+        // Calucl des calories dépensé
         double poids = ui->spinBox_poids->value();
         double calorie = distance * poids * 1.036;
         QString calorie_string = QString("%1").arg(calorie);
         ui->lineEdit_calorie->setText(calorie_string);
 
-        //altitude
+        // Affichage de l'altitude
         ui->lineEdit_altitude->setText(altitude);
 
-        //vitesse
+        // Calcul de la vitesse
         double vitesse;
         double diff_tps = timestamp - last_timestamp;
         vitesse = distAB/ (diff_tps/3600.0);
         QString vitesseString = QString("%1").arg(vitesse);
         ui->lineEdit_vitesse->setText(vitesseString);
 
-        // courbe fréquence
+        // Dessin de la courbe de fréquence
         QPainter painter(pPhoto_vide);
         ui->label_photo_vide->setPixmap(QPixmap::fromImage(*pPhoto_vide));
         painter.setPen(QPen(Qt::transparent, 1));
+        // Dessin d'une ligne
         painter.drawLine(compteur, 200, compteur,200);
+        // Choix de la couleur
         painter.setPen(QPen(Qt::red, 1));
         painter.drawLine(compteur, 500, compteur,600 - freq);
         compteur += 1;
+        // Code pour le faite que la courbe recommence à 0 au bout d'un certain temps
         if (compteur >= ui->label_courbe_cardiaque->width()) {
             pPhoto_vide->fill(Qt::transparent);
             compteur = 0;
         }
-        //courbe altitude
-
+        //Dessin de la courbe d'altitude
         int altitudeDouble = altitude.toDouble();
+        // Choix de la couleur
         painter.setPen(QPen(Qt::black, 1));
+        // Dessin d'une ligne
         painter.drawLine(compteur, 600, compteur,550 - altitudeDouble);
         ui->label_courbe_altitude->width();
         painter.end();
